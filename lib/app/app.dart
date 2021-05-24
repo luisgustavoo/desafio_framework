@@ -5,7 +5,8 @@ import 'package:desafio_framework/app/modules/home/favorites/favorites_page.dart
 import 'package:desafio_framework/app/modules/home/home_controller.dart';
 import 'package:desafio_framework/app/modules/home/home_page.dart';
 import 'package:desafio_framework/app/repositories/pokemon_repository.dart';
-import 'package:desafio_framework/app/shared/services/client_http.dart';
+import 'package:desafio_framework/app/repositories/local_storage.dart';
+import 'package:desafio_framework/app/services/client_http.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_plus/flutter_plus.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,8 @@ class App extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider(create: (_) => ClientHttp()),
-        Provider(create: (context) => PokemonRepository(context.read<ClientHttp>())),
+        Provider(create: (_) => LocalStorage()),
+        Provider(create: (context) => PokemonRepository(context.read<ClientHttp>(), context.read<LocalStorage>())),
         ChangeNotifierProvider(
             create: (context) =>
                 HomeController(context.read<PokemonRepository>())),

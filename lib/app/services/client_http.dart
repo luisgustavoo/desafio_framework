@@ -1,5 +1,5 @@
-import 'package:desafio_framework/app/shared/dio/custom_dio.dart';
 
+import 'package:desafio_framework/app/services/dio/custom_dio.dart';
 
 class ClientHttp {
   final _dio = CustomDio.instance;

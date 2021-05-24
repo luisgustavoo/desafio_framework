@@ -22,12 +22,6 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
-
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-    ));
-
     return Scaffold(
       appBar: _buildAppBar(context),
       backgroundColor: widget.pokemonModel.color,
@@ -109,7 +103,6 @@ class _DetailsPageState extends State<DetailsPage> {
     }
 
     return list;
-
   }
 
   Widget _buildContentStats(StatsModel stats) {
@@ -202,6 +195,15 @@ class _DetailsPageState extends State<DetailsPage> {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
+    ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
     ));
   }
 }

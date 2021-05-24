@@ -1,21 +1,23 @@
 import 'dart:convert';
+import 'package:desafio_framework/app/services/client_http.dart';
 import 'package:desafio_framework/app/shared/pokemon_colors.dart';
 import 'package:desafio_framework/app/exceptions/rest_exception.dart';
 import 'package:desafio_framework/app/models/pagination_filter.dart';
 import 'package:desafio_framework/app/models/pokemon_model.dart';
 import 'package:desafio_framework/app/models/stats_model.dart';
 import 'package:desafio_framework/app/models/types_model.dart';
-import 'package:desafio_framework/app/shared/services/client_http.dart';
+import 'package:desafio_framework/app/repositories/local_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PokemonRepository {
-  PokemonRepository(this.clientHttp);
+  PokemonRepository(this.clientHttp, this._localStorage);
 
   final ClientHttp clientHttp;
   final _pokemonsList = <PokemonModel>[];
+  final LocalStorage _localStorage;
 
   Future<List<PokemonModel>> fetchPokemons(PaginationFilter filter) async {
     try {
@@ -81,45 +83,20 @@ class PokemonRepository {
   }
 
   Future<void> addFavorites(PokemonModel pokemon) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-          pokemon.id.toString(), json.encode(pokemon.toMap()));
-    } on Exception catch (error) {
-      print(error);
-      rethrow;
-    }
+    await _localStorage.addFavorites(pokemon);
     //await localStoragePlus.write(pokemon.id.toString(), jsonEncode(pokemon.toMap()));
   }
 
   Future<void> removeFavorites(PokemonModel pokemon) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(pokemon.id.toString());
-    } on Exception catch (e) {
-      print(e);
-      rethrow;
-    }
+    await _localStorage.removeFavorites(pokemon);
   }
 
   Future<List<PokemonModel>> fetchFavorites() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-
-      return prefs.getKeys().map((key) {
-        return PokemonModel.fromMap(
-            jsonDecode(prefs.getString(key) ?? '') as Map<String, dynamic>);
-      }).toList();
-    } on Exception catch (error) {
-      print(error);
-      rethrow;
-    }
+    return _localStorage.fetchFavorites();
   }
 
   Future<bool> _isFavorites(PokemonModel pokemon) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.containsKey(pokemon.id.toString());
-    //return await localStoragePlus.containsKey(pokemon.id.toString());
+    return _localStorage.isFavorites(pokemon);
   }
 
   List<StatsModel> _getStatsModel(List<Map<String, dynamic>> stats) {

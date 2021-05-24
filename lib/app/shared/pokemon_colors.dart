@@ -10,7 +10,8 @@ class PokemonColors  {
   static const Color purple = Color(0xFFCE93D8);
   static const Color red = Color(0xFFFB6C6C);
   static const Color white = Color(0xFFFFFFFF);
-  static const Color yellow = Color(0xFFFFF59D);
+  static const Color yellow = Color(0xFFFFF176);
+  static const Color yellow2 = Colors.yellow;
 
 
 }
