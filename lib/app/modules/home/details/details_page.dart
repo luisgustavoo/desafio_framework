@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:desafio_framework/app/models/pokemon_model.dart';
 import 'package:desafio_framework/app/models/stats_model.dart';
-import 'package:desafio_framework/app/modules/details/details_controller.dart';
+import 'package:desafio_framework/app/modules/home/home_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,13 +9,10 @@ import 'package:flutter_plus/flutter_plus.dart';
 import 'package:provider/provider.dart';
 
 class DetailsPage extends StatefulWidget {
-  const DetailsPage(
-      {required this.controller, required this.pokemonModel, Key? key})
-      : super(key: key);
+  const DetailsPage({required this.pokemonModel, Key? key}) : super(key: key);
 
   static const routeName = 'details';
 
-  final DetailsController controller;
   final PokemonModel pokemonModel;
 
   @override
@@ -23,17 +20,8 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-
-
-
-
   @override
   Widget build(BuildContext context) {
-    /*  return SafeArea(
-      child: Scaffold(
-        body: _buildContentType(pokemonModel, MediaQuery.of(context).size.width),
-      ),
-    );*/
 
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -42,32 +30,6 @@ class _DetailsPageState extends State<DetailsPage> {
 
     return Scaffold(
       appBar: _buildAppBar(context),
-/*      appBar:  AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.close,
-            color: Colors.white,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          Consumer<DetailsController>(builder: (context, controller, _) {
-            return IconButton(
-                onPressed: () => controller.toggleFavorite(pokemonModel),
-                icon: pokemonModel.isFavorite
-                    ? const Icon(
-                        Icons.favorite,
-                        color: Colors.white,
-                      )
-                    : const Icon(
-                        Icons.favorite_border,
-                        color: Colors.white,
-                      ));
-          })
-        ],
-      ),*/
       backgroundColor: widget.pokemonModel.color,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -148,17 +110,6 @@ class _DetailsPageState extends State<DetailsPage> {
 
     return list;
 
-/*    return ContainerPlus(
-      radius: RadiusPlus.all(20),
-      color: Colors.white.withOpacity(0.3),
-      border: BorderPlus(width: 0.5, color: Colors.white),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      child: TextPlus(
-        name,
-        fontSize: 16,
-        color: Colors.white,
-      ),
-    );*/
   }
 
   Widget _buildContentStats(StatsModel stats) {
@@ -226,9 +177,10 @@ class _DetailsPageState extends State<DetailsPage> {
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
-              Consumer<DetailsController>(builder: (context, controller, _) {
+              Consumer<HomeController>(builder: (context, controller, _) {
                 return IconButton(
-                    onPressed: () => controller.toggleFavorite(widget.pokemonModel),
+                    onPressed: () =>
+                        controller.toggleFavorite(widget.pokemonModel),
                     icon: widget.pokemonModel.isFavorite
                         ? const Icon(
                             Icons.favorite,

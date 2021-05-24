@@ -8,9 +8,9 @@ class HomeController extends ChangeNotifier {
   HomeController(this._repository);
 
   final PokemonRepository _repository;
-  HomeState _state = HomeState.empty;
+  HomeState _state = HomeState.idle;
   var _pokemonsList = <PokemonModel>[];
-  var _pokemonsListOrigem = <PokemonModel>[];
+  var _pokemonsListOrigin = <PokemonModel>[];
   var _lastPage = false;
   bool isLoadingNextPage = false;
   final _paginationFilter = PaginationFilter(offset: 0, limit: 20);
@@ -18,8 +18,6 @@ class HomeController extends ChangeNotifier {
   HomeState get state => _state;
 
   List<PokemonModel> get pokemonsList => _pokemonsList;
-
-  set pokemonsList(List<PokemonModel> value) => _pokemonsList = value;
 
   bool get lastPage => _lastPage;
 
@@ -31,7 +29,7 @@ class HomeController extends ChangeNotifier {
 
     try {
       _pokemonsList = await _repository.fetchPokemons(_paginationFilter);
-      _pokemonsListOrigem = _pokemonsList;
+      _pokemonsListOrigin = _pokemonsList;
 
       if (_pokemonsList.isEmpty) {
         _lastPage = true;
@@ -47,11 +45,11 @@ class HomeController extends ChangeNotifier {
   }
 
   void filterPokemon(String text) {
-    pokemonsList = _pokemonsListOrigem;
+    _pokemonsList = _pokemonsListOrigin;
 
-    final filteredList = pokemonsList.where(
+    final filteredList = _pokemonsList.where(
         (pokemon) => pokemon.name.toUpperCase().contains(text.toUpperCase()));
-    pokemonsList = List<PokemonModel>.from(filteredList);
+    _pokemonsList = List<PokemonModel>.from(filteredList);
     notifyListeners();
   }
 
@@ -64,20 +62,20 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> _addFavorites(PokemonModel pokemon) async {
-    await _repository.addFavorites(pokemon);
     pokemon.isFavorite = true;
+    _pokemonsList[_pokemonsList
+        .indexWhere((element) => element.id == pokemon.id)] = pokemon;
+    await _repository.addFavorites(pokemon);
     notifyListeners();
   }
 
   Future<void> _removeFavorites(PokemonModel pokemon) async {
-    await _repository.removeFavorites(pokemon);
     pokemon.isFavorite = false;
+    _pokemonsList[_pokemonsList
+        .indexWhere((element) => element.id == pokemon.id)] = pokemon;
+    await _repository.removeFavorites(pokemon);
     notifyListeners();
   }
-
-/*  Future<bool> isFavorites(PokemonModel pokemon) async {
-    return _repository.isFavorites(pokemon);
-  }*/
 
   Future<List<PokemonModel>> fetchFavorites() async {
     return _repository.fetchFavorites();
@@ -91,7 +89,6 @@ class HomeController extends ChangeNotifier {
 
   Future<void> nextPage() async {
     _changePaginationFilter(_paginationFilter.offset + 20, 20);
-    print(_paginationFilter);
 
     isLoadingNextPage = true;
     notifyListeners();

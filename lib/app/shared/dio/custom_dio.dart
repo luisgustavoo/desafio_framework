@@ -5,7 +5,6 @@ class CustomDio {
 
   CustomDio._() {
     _dio = Dio(options);
-    //_dio.interceptors.add(InterceptorWrapper());
   }
 
   late Dio _dio;

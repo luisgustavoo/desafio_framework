@@ -1,36 +1,25 @@
 import 'package:desafio_framework/app/models/pokemon_model.dart';
-import 'package:desafio_framework/app/modules/favorites/favorites_state.dart';
+import 'package:desafio_framework/app/modules/home/favorites/favorites_state.dart';
+import 'package:desafio_framework/app/modules/home/home_controller.dart';
 import 'package:desafio_framework/app/repositories/pokemon_repository.dart';
 import 'package:flutter/material.dart';
 
 class FavoritesController extends ChangeNotifier {
-  FavoritesController(this._repository);
+  FavoritesController(this._repository, this._homeController);
 
   final PokemonRepository _repository;
+  final HomeController _homeController;
 
-  FavoriteState state = FavoriteState.empty;
+  FavoriteState state = FavoriteState.idle;
 
   List<PokemonModel> _favoriteList = <PokemonModel>[];
 
   List<PokemonModel> get favoriteList => _favoriteList;
 
-  void toggleFavorite(PokemonModel pokemon) {
-    if (pokemon.isFavorite) {
-      _removeFavorites(pokemon);
-    } else {
-      _addFavorites(pokemon);
-    }
-  }
 
-  Future<void> _addFavorites(PokemonModel pokemon) async {
-    await _repository.addFavorites(pokemon);
-    pokemon.isFavorite = true;
-    notifyListeners();
-  }
-
-  Future<void> _removeFavorites(PokemonModel pokemon) async {
+  Future<void>removeFavorites(PokemonModel pokemon) async {
     await _repository.removeFavorites(pokemon);
-    pokemon.isFavorite = false;
+    _homeController.toggleFavorite(pokemon);
     _favoriteList.remove(pokemon);
     notifyListeners();
   }
@@ -41,9 +30,8 @@ class FavoritesController extends ChangeNotifier {
       _favoriteList = await _repository.fetchFavorites();
       state = FavoriteState.success;
     } on Exception catch (error) {
-      print(error);
       state = FavoriteState.error;
-      Exception('Erro ao buscar favoritos');
+      Exception('Erro ao buscar favoritos $error');
     } finally {
       notifyListeners();
     }

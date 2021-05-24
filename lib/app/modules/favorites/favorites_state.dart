@@ -1,1 +1,0 @@
-enum FavoriteState { success, loading, error, empty }

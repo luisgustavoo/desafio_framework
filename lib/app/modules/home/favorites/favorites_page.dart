@@ -1,5 +1,5 @@
-import 'package:desafio_framework/app/modules/favorites/favorites_controller.dart';
-import 'package:desafio_framework/app/modules/favorites/favorites_state.dart';
+import 'package:desafio_framework/app/modules/home/favorites/favorites_controller.dart';
+import 'package:desafio_framework/app/modules/home/favorites/favorites_state.dart';
 import 'package:desafio_framework/app/shared/component/list_tile_pokemon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_plus/flutter_plus.dart';
@@ -52,7 +52,7 @@ class FavoritesPage extends StatelessWidget {
       case FavoriteState.loading:
         return const CircularProgressIndicator();
       case FavoriteState.error:
-        return const Text('Erro oao listar pokemons');
+        return const Text('Erro ao listar pokemons');
       default:
         return _buildContent(controller);
     }
@@ -69,7 +69,7 @@ class FavoritesPage extends StatelessWidget {
       itemBuilder: (context, index) => ListTilePokemon(
           controller.favoriteList[index],
           onTapFavorite: () =>
-              controller.toggleFavorite(controller.favoriteList[index]),
+              controller.removeFavorites(controller.favoriteList[index]),
           onTapCard: () {}),
       itemCount: controller.favoriteList.length,
     );

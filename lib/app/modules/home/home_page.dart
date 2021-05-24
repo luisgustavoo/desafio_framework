@@ -1,28 +1,35 @@
-import 'dart:async';
-
-import 'package:desafio_framework/app/modules/details/details_page.dart';
+import 'package:desafio_framework/app/modules/home/details/details_page.dart';
 import 'package:desafio_framework/app/modules/home/home_controller.dart';
 import 'package:desafio_framework/app/modules/home/home_state.dart';
 import 'package:desafio_framework/app/shared/component/list_tile_pokemon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_plus/flutter_plus.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({required this.controller});
+
+  const HomePage(this.controller);
+
+  static const routeName = '/';
 
   final HomeController controller;
-  static const routeName = '/';
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>  {
+class _HomePageState extends State<HomePage> {
   final TextEditingController _filterController = TextEditingController();
 
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      widget.controller.fetchPokemon();
+    });
+  }
 
   @override
   void dispose() {
@@ -30,22 +37,15 @@ class _HomePageState extends State<HomePage>  {
     _filterController.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-        appBar: _buildAppBar(context),
-        body: Center(
-          child: Consumer<HomeController>(
-            builder: (context, controller, _) {
-              return _buildHomePage(controller);
-            },
-          ),
-        ));
+    return Consumer<HomeController>(
+        builder: (context, controller, _) => Scaffold(
+            appBar: _buildAppBar(context, controller),
+            body: Center(child: _buildHomePage(controller))));
   }
 
-  PreferredSize _buildAppBar(BuildContext context) {
+  PreferredSize _buildAppBar(BuildContext context, HomeController controller) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(168),
       child: Material(
@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage>  {
                   Icons.search,
                   color: Color(0xFFCCCCCC),
                 ),
-                onChanged: widget.controller.filterPokemon,
+                onChanged: controller.filterPokemon,
                 controller: _filterController,
               )
             ],
@@ -136,24 +136,6 @@ class _HomePageState extends State<HomePage>  {
                         .pushNamed(DetailsPage.routeName, arguments: pokemon),
                     onTapFavorite: () => controller.toggleFavorite(pokemon),
                   );
-
-                  /*return ListTile(
-                    title: Text(
-                      pokemon.name,
-                      style: TextStyle(color: pokemon.color),
-                    ),
-                    trailing: IconButton(
-                      icon: pokemon.isFavorite
-                          ? Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            )
-                          : Icon(Icons.favorite_border),
-                      onPressed: () => pokemon.isFavorite
-                          ? controller.removeFavorites(pokemon)
-                          : controller.addFavorites(pokemon),
-                    ),
-                  );*/
                 }),
           ),
         ),

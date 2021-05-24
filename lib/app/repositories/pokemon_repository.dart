@@ -1,46 +1,46 @@
 import 'dart:convert';
-import 'package:desafio_framework/app/core/pokemon_colors.dart';
+import 'package:desafio_framework/app/shared/pokemon_colors.dart';
 import 'package:desafio_framework/app/exceptions/rest_exception.dart';
 import 'package:desafio_framework/app/models/pagination_filter.dart';
 import 'package:desafio_framework/app/models/pokemon_model.dart';
 import 'package:desafio_framework/app/models/stats_model.dart';
 import 'package:desafio_framework/app/models/types_model.dart';
+import 'package:desafio_framework/app/shared/services/client_http.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PokemonRepository {
-  PokemonRepository(this._dio);
+  PokemonRepository(this.clientHttp);
 
-  final Dio _dio;
+  final ClientHttp clientHttp;
   final _pokemonsList = <PokemonModel>[];
 
   Future<List<PokemonModel>> fetchPokemons(PaginationFilter filter) async {
     try {
       late Color color;
 
-      final response = await _dio.get<Map<String, dynamic>>('/pokemon',
+      final response = await clientHttp.get('/pokemon',
           queryParameters: <String, dynamic>{
             'offset': filter.offset,
             'limit': filter.limit
           });
 
-      if ((response.data ?? <String, dynamic>{}).isNotEmpty) {
-        for (var i = 0; i < (response.data!['results'] as List).length; i++) {
-          final pokemonResponse = await _dio.get<Map<String, dynamic>>(
-              response.data!['results'][i]['url'].toString());
+      if (response.isNotEmpty) {
+        for (var i = 0; i < (response['results'] as List).length; i++) {
+          final pokemonResponse =
+              await clientHttp.get(response['results'][i]['url'].toString());
 
-          if ((pokemonResponse.data ?? <String, dynamic>{}).isNotEmpty) {
-            final pokemonData = pokemonResponse.data!;
+          if (pokemonResponse.isNotEmpty) {
+            final pokemonData = pokemonResponse;
 
-            final pokemonSpecieResponse = await _dio.get<Map<String, dynamic>>(
-                pokemonData['species']['url'].toString());
+            final pokemonSpecieResponse =
+                await clientHttp.get(pokemonData['species']['url'].toString());
 
-            if ((pokemonSpecieResponse.data ?? <String, dynamic>{})
-                .isNotEmpty) {
+            if (pokemonSpecieResponse.isNotEmpty) {
               color = _getColor(
-                  pokemonSpecieResponse.data!['color']['name'].toString());
+                  pokemonSpecieResponse['color']['name'].toString());
             }
 
             final statsModelList = _getStatsModel(
@@ -83,12 +83,8 @@ class PokemonRepository {
   Future<void> addFavorites(PokemonModel pokemon) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-
-      pokemon.isFavorite = true;
-      print(pokemon.toMap());
       await prefs.setString(
           pokemon.id.toString(), json.encode(pokemon.toMap()));
-
     } on Exception catch (error) {
       print(error);
       rethrow;
@@ -99,7 +95,6 @@ class PokemonRepository {
   Future<void> removeFavorites(PokemonModel pokemon) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      pokemon.isFavorite = false;
       await prefs.remove(pokemon.id.toString());
     } on Exception catch (e) {
       print(e);
@@ -133,12 +128,6 @@ class PokemonRepository {
             name: stat['stat']['name'] as String,
             baseStats: stat['base_stat'] as int))
         .toList();
-
-/*    return List<Map<String, dynamic>>.from(stats)
-        .map((stat) => StatsModel(
-            name: stat['stat']['name'] as String,
-            baseStats: stat['base_stat'] as int))
-        .toList();*/
   }
 
   Color _getColor(String color) {
