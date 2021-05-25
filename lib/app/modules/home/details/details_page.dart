@@ -84,7 +84,7 @@ class _DetailsPageState extends State<DetailsPage> {
     final list = <Widget>[];
 
     for (var i = 0; i < pokemonModel.type.length; i++) {
-      if ((i / 2) != 0) {
+      if ((i % 2) != 0) {
         list.add(const SizedBox(
           width: 10,
         ));
@@ -174,6 +174,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 return IconButton(
                     onPressed: () =>
                         controller.toggleFavorite(widget.pokemonModel),
+                    splashRadius: 20,
                     icon: widget.pokemonModel.isFavorite
                         ? const Icon(
                             Icons.favorite,

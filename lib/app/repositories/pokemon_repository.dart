@@ -1,7 +1,6 @@
-import 'dart:convert';
+import 'package:desafio_framework/app/error/rest_exception.dart';
 import 'package:desafio_framework/app/services/client_http.dart';
 import 'package:desafio_framework/app/shared/pokemon_colors.dart';
-import 'package:desafio_framework/app/exceptions/rest_exception.dart';
 import 'package:desafio_framework/app/models/pagination_filter.dart';
 import 'package:desafio_framework/app/models/pokemon_model.dart';
 import 'package:desafio_framework/app/models/stats_model.dart';
@@ -10,7 +9,7 @@ import 'package:desafio_framework/app/repositories/local_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class PokemonRepository {
   PokemonRepository(this.clientHttp, this._localStorage);

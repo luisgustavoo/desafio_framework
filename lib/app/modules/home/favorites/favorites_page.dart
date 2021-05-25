@@ -32,7 +32,7 @@ class FavoritesPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
-                constraints: const BoxConstraints(),
+                splashRadius: 20,
                 onPressed: () => Navigator.of(context).pop(),
                 icon: const Icon(Icons.close)),
             const Spacer(),

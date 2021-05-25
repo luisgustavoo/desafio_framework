@@ -77,7 +77,7 @@ class _ListTilePokemonState extends State<ListTilePokemon> {
 
     return IconButton(
       padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(),
+      splashRadius: 20,
       icon: pokemonModel.isFavorite
           ? const Icon(
               Icons.favorite,
@@ -97,7 +97,7 @@ class _ListTilePokemonState extends State<ListTilePokemon> {
 
     for (var i = 0; i < pokemonModel.type.length; i++) {
 
-      if( (i / 2) != 0){
+      if( (i % 2) != 0){
         list.add(const SizedBox(
           width: 4,
         ));

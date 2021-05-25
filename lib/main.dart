@@ -7,4 +7,3 @@ Future<void> main() async {
   await dotenv.load();
   runApp(App());
 }
-

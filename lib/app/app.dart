@@ -41,7 +41,7 @@ class App extends StatelessWidget {
           },
           DetailsPage.routeName: (context) {
             final pokemonModel =
-                ModalRoute.of(context)!.settings.arguments! as PokemonModel;
+            ModalRoute.of(context)!.settings.arguments! as PokemonModel;
             return DetailsPage(
               pokemonModel: pokemonModel,
             );

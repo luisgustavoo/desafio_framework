@@ -3,6 +3,7 @@ import 'package:desafio_framework/app/modules/home/home_controller.dart';
 import 'package:desafio_framework/app/modules/home/home_state.dart';
 import 'package:desafio_framework/app/shared/component/list_tile_pokemon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_plus/flutter_plus.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:provider/provider.dart';
@@ -71,6 +72,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.favorite_border),
+                    splashRadius: 20,
                     constraints: const BoxConstraints(),
                     padding: EdgeInsets.zero,
                     onPressed: () =>
